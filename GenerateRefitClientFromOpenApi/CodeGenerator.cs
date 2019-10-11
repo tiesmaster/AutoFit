@@ -22,15 +22,10 @@ namespace GenerateRefitClientFromOpenApi
             var root = CompilationUnit()
                 .WithMembers(
                     SingletonList<MemberDeclarationSyntax>(
-                        NamespaceDeclaration(
-                            QualifiedName(
-                                QualifiedName(
-                                    IdentifierName("Buddy"),
-                                    IdentifierName("RaboDirectConnectApi")),
-                                IdentifierName("Dto")))
+                        NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
                         .WithMembers(
                             SingletonList<MemberDeclarationSyntax>(
-                                ClassDeclaration("BeneficiaryDto")
+                                ClassDeclaration(dtoName)
                                 .WithModifiers(
                                     TokenList(
                                         Token(SyntaxKind.PublicKeyword)))
