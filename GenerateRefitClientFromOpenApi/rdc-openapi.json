@@ -1,0 +1,92 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "Buddy RaboDirectConnectApi"
+  },
+  "paths": {
+    "/api/bank_account/{accountNumber}/Transactions": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "GetAsync",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "uniqueItems": false,
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TransactionDto"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TransactionDto": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "amount": {
+          "format": "double",
+          "type": "number"
+        },
+        "beneficiary": {
+          "$ref": "#/definitions/BeneficiaryDto"
+        },
+        "startBalance": {
+          "format": "double",
+          "type": "number"
+        },
+        "endBalance": {
+          "format": "double",
+          "type": "number"
+        },
+        "variabilityType": {
+          "type": "string"
+        },
+        "mainCategory": {
+          "type": "string"
+        },
+        "subCategory": {
+          "type": "string"
+        }
+      }
+    },
+    "BeneficiaryDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "accountNumber": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
