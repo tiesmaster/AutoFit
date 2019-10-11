@@ -22,10 +22,59 @@ namespace GenerateRefitClientFromOpenApi
             var root = CompilationUnit()
                 .WithMembers(
                     SingletonList<MemberDeclarationSyntax>(
-                        ClassDeclaration("Hoi")
-                        .WithModifiers(
-                            TokenList(
-                                Token(SyntaxKind.PublicKeyword)))));
+                        NamespaceDeclaration(
+                            QualifiedName(
+                                QualifiedName(
+                                    IdentifierName("Buddy"),
+                                    IdentifierName("RaboDirectConnectApi")),
+                                IdentifierName("Dto")))
+                        .WithMembers(
+                            SingletonList<MemberDeclarationSyntax>(
+                                ClassDeclaration("BeneficiaryDto")
+                                .WithModifiers(
+                                    TokenList(
+                                        Token(SyntaxKind.PublicKeyword)))
+                                .WithMembers(
+                                    List<MemberDeclarationSyntax>(
+                                        new MemberDeclarationSyntax[]{
+                                            PropertyDeclaration(
+                                                PredefinedType(
+                                                    Token(SyntaxKind.StringKeyword)),
+                                                Identifier("Name"))
+                                            .WithModifiers(
+                                                TokenList(
+                                                    Token(SyntaxKind.PublicKeyword)))
+                                            .WithAccessorList(
+                                                AccessorList(
+                                                    List<AccessorDeclarationSyntax>(
+                                                        new AccessorDeclarationSyntax[]{
+                                                            AccessorDeclaration(
+                                                                SyntaxKind.GetAccessorDeclaration)
+                                                            .WithSemicolonToken(
+                                                                Token(SyntaxKind.SemicolonToken)),
+                                                            AccessorDeclaration(
+                                                                SyntaxKind.SetAccessorDeclaration)
+                                                            .WithSemicolonToken(
+                                                                Token(SyntaxKind.SemicolonToken))}))),
+                                            PropertyDeclaration(
+                                                PredefinedType(
+                                                    Token(SyntaxKind.StringKeyword)),
+                                                Identifier("AccountNumber"))
+                                            .WithModifiers(
+                                                TokenList(
+                                                    Token(SyntaxKind.PublicKeyword)))
+                                            .WithAccessorList(
+                                                AccessorList(
+                                                    List<AccessorDeclarationSyntax>(
+                                                        new AccessorDeclarationSyntax[]{
+                                                            AccessorDeclaration(
+                                                                SyntaxKind.GetAccessorDeclaration)
+                                                            .WithSemicolonToken(
+                                                                Token(SyntaxKind.SemicolonToken)),
+                                                            AccessorDeclaration(
+                                                                SyntaxKind.SetAccessorDeclaration)
+                                                            .WithSemicolonToken(
+                                                                Token(SyntaxKind.SemicolonToken))})))}))))));
 
             return root
                 .NormalizeWhitespace()
