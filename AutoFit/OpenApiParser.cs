@@ -8,8 +8,11 @@ namespace AutoFit
     {
         public static DtoDefinition ParseDefinition(JsonProperty jsonDefinition)
         {
-            var propertyDefinitions = jsonDefinition.Value.GetProperty("properties");
-            var dtoProperties = propertyDefinitions.EnumerateObject().Select(ToPropertyDefinition);
+            var dtoProperties = jsonDefinition
+                .Value
+                .GetProperty("properties")
+                .EnumerateObject()
+                .Select(ToPropertyDefinition);
 
             var dtoDefinition = new DtoDefinition
             {
@@ -25,14 +28,14 @@ namespace AutoFit
             return new PropertyDefinition
             {
                 TypeName = ParseDtoType(propertyDefinition.Value),
-                IdentifierName = Capitalize(propertyDefinition.Name)
+                IdentifierName = propertyDefinition.Name.Capitalize()
             };
         }
 
         private static string ParseDtoType(JsonElement propertyDefinitionElement)
         {
-            var type = TryGetPropertyOrDefault(propertyDefinitionElement, "type");
-            var format = TryGetPropertyOrDefault(propertyDefinitionElement, "format");
+            var type = propertyDefinitionElement.TryGetPropertyOrDefault("type");
+            var format = propertyDefinitionElement.TryGetPropertyOrDefault("format");
 
             return type switch
             {
@@ -41,19 +44,6 @@ namespace AutoFit
                 null => ParseReferenceToOtherDefinition(propertyDefinitionElement),
                 _ => type,
             };
-        }
-
-        private static string ParseReferenceToOtherDefinition(JsonElement propertyDefinitionElement)
-        {
-            var reference = propertyDefinitionElement.GetProperty("$ref").ToString();
-            return reference.Substring("#/definitions/".Length);
-        }
-
-        private static string TryGetPropertyOrDefault(JsonElement propertyDefinitionElement, string jsonPropertyName)
-        {
-            return propertyDefinitionElement.TryGetProperty(jsonPropertyName, out var format)
-                ? format.ToString()
-                : null;
         }
 
         private static string ParseFormat(string format)
@@ -65,9 +55,10 @@ namespace AutoFit
             };
         }
 
-        private static string Capitalize(string name)
+        private static string ParseReferenceToOtherDefinition(JsonElement propertyDefinitionElement)
         {
-            return name.Length < 2 ? name : char.ToUpper(name[0]) + name.Substring(1);
+            var reference = propertyDefinitionElement.GetProperty("$ref").ToString();
+            return reference.Substring("#/definitions/".Length);
         }
     }
 }
