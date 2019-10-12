@@ -10,12 +10,12 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace AutoFit
 {
-    public class DtoGenerator
+    public class SourceEmitter
     {
         private readonly string _namespaceName;
         private readonly string _outputPath;
 
-        public DtoGenerator(string namespaceName, string outputPath)
+        public SourceEmitter(string namespaceName, string outputPath)
         {
             _namespaceName = namespaceName;
             _outputPath = outputPath;

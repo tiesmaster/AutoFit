@@ -6,12 +6,12 @@ namespace AutoFit
     public class CodeGenerator
     {
         private readonly string _inputFile;
-        private readonly DtoGenerator _dtoGenerator;
+        private readonly SourceEmitter _sourceEmitter;
 
         public CodeGenerator(string inputFile, string outputPath, string namespaceName)
         {
             _inputFile = inputFile;
-            _dtoGenerator = new DtoGenerator(namespaceName, outputPath);
+            _sourceEmitter = new SourceEmitter(namespaceName, outputPath);
         }
 
         public void Emit()
@@ -28,7 +28,7 @@ namespace AutoFit
         private void GenerateDto(JsonProperty jsonDtoDefinition)
         {
             var dtoDefinition = OpenApiParser.ParseDefinition(jsonDtoDefinition);
-            _dtoGenerator.EmitDto(dtoDefinition);
+            _sourceEmitter.EmitDto(dtoDefinition);
         }
     }
 }
