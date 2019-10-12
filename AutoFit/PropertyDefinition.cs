@@ -1,4 +1,4 @@
-﻿namespace GenerateRefitClientFromOpenApi
+﻿namespace AutoFit
 {
     public class PropertyDefinition
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.Json;
 
-namespace GenerateRefitClientFromOpenApi
+namespace AutoFit
 {
     public static class Program
     {

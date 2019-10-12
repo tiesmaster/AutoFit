@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Formatting;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace GenerateRefitClientFromOpenApi
+namespace AutoFit
 {
     public class CodeGenerator
     {
