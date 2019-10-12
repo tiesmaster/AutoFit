@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 
@@ -16,6 +17,7 @@ namespace AutoFit
             var dtoDefinitions = document.RootElement.GetProperty("definitions");
 
             GenerateDto(codeGenerator, "BeneficiaryDto", dtoDefinitions);
+            GenerateDto(codeGenerator, "TransactionDto", dtoDefinitions);
         }
 
         private static void GenerateDto(CodeGenerator codeGenerator, string dtoName, JsonElement dtoDefinitions)
@@ -32,8 +34,37 @@ namespace AutoFit
         {
             return new PropertyDefinition
             {
-                TypeName = propertyDefinition.Value.GetProperty("type").ToString(),
+                TypeName = ParseDtoType(propertyDefinition.Value),
                 IdentifierName = Capitalize(propertyDefinition.Name)
+            };
+        }
+
+        private static string ParseDtoType(JsonElement propertyDefinitionElement)
+        {
+            var type = propertyDefinitionElement.GetProperty("type").ToString();
+            var format = GetFormat(propertyDefinitionElement);
+
+            return type switch
+            {
+                "number" => propertyDefinitionElement.GetProperty("format").ToString(),
+                "string" when format != null => ParseFormat(format),
+                _ => type,
+            };
+        }
+
+        private static string GetFormat(JsonElement propertyDefinitionElement)
+        {
+            return propertyDefinitionElement.TryGetProperty("format", out var format)
+                ? format.ToString()
+                : null;
+        }
+
+        private static string ParseFormat(string format)
+        {
+            return format switch
+            {
+                "date-time" => "DateTime",
+                _ => throw new NotSupportedException()
             };
         }
 

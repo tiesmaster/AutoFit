@@ -44,7 +44,9 @@ namespace AutoFit
             var namespaceDeclaration = NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
                 .WithMembers(SingletonList<MemberDeclarationSyntax>(classDeclaration));
 
-            return CompilationUnit().WithMembers(SingletonList<MemberDeclarationSyntax>(namespaceDeclaration));
+            return CompilationUnit()
+                .WithUsings(SingletonList(UsingDirective(IdentifierName("System"))))
+                .WithMembers(SingletonList<MemberDeclarationSyntax>(namespaceDeclaration));
         }
 
         private MemberDeclarationSyntax GeneratePropertyFromDtoDefinition(PropertyDefinition dtoDefinition)
