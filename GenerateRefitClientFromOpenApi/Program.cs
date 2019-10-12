@@ -4,9 +4,9 @@ using System.Text.Json;
 
 namespace GenerateRefitClientFromOpenApi
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             using var document = JsonDocument.Parse(File.OpenRead("rdc-openapi.json"));
             var dtoDefinitions = document.RootElement.GetProperty("definitions");
@@ -34,8 +34,13 @@ namespace GenerateRefitClientFromOpenApi
             return new PropertyDefinition
             {
                 TypeName = propertyDefinition.Value.GetProperty("type").ToString(),
-                IdentifierName = propertyDefinition.Name
+                IdentifierName = Capitalize(propertyDefinition.Name)
             };
+        }
+
+        private static string Capitalize(string name)
+        {
+            return name.Length < 2 ? name : char.ToUpper(name[0]) + name.Substring(1);
         }
     }
 }
