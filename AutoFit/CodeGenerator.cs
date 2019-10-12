@@ -1,30 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
-
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace AutoFit
 {
     public class CodeGenerator
     {
         private readonly string _inputFile;
-        private readonly string _outputPath;
-
-        private readonly string _namespaceName;
+        private readonly DtoGenerator _dtoGenerator;
 
         public CodeGenerator(string inputFile, string outputPath, string namespaceName)
         {
             _inputFile = inputFile;
-            _outputPath = outputPath;
-            _namespaceName = namespaceName;
+            _dtoGenerator = new DtoGenerator(namespaceName, outputPath);
         }
 
         public void Emit()
@@ -43,7 +32,7 @@ namespace AutoFit
             var propertyDefinitions = dtoDefinition.GetProperty("properties");
             var dtoProperties = propertyDefinitions.EnumerateObject().Select(ToPropertyDefinition);
 
-            GenerateDto(dtoName, dtoProperties);
+            _dtoGenerator.EmitDto(dtoName, dtoProperties);
         }
 
         private static PropertyDefinition ToPropertyDefinition(JsonProperty propertyDefinition)
@@ -94,47 +83,6 @@ namespace AutoFit
         private static string Capitalize(string name)
         {
             return name.Length < 2 ? name : char.ToUpper(name[0]) + name.Substring(1);
-        }
-
-        public void GenerateDto(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
-        {
-            var workspace = new AdhocWorkspace();
-            var root = GenerateCore(dtoName, dtoProperties);
-
-            root = Formatter.Format(root, workspace);
-
-            var source = root.ToFullString();
-            var outputFile = Path.Combine(_outputPath, $"{dtoName}.cs");
-
-            File.WriteAllText(outputFile, source);
-        }
-
-        private SyntaxNode GenerateCore(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
-        {
-            var classDeclaration = ClassDeclaration(dtoName)
-                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                .WithMembers(List(dtoProperties.Select(GeneratePropertyFromDtoDefinition)));
-
-            var namespaceDeclaration = NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
-                .WithMembers(SingletonList<MemberDeclarationSyntax>(classDeclaration));
-
-            return CompilationUnit()
-                .WithUsings(SingletonList(UsingDirective(IdentifierName("System"))))
-                .WithMembers(SingletonList<MemberDeclarationSyntax>(namespaceDeclaration));
-        }
-
-        private MemberDeclarationSyntax GeneratePropertyFromDtoDefinition(PropertyDefinition dtoDefinition)
-        {
-            static AccessorDeclarationSyntax GetOrSetNode(SyntaxKind getOrSetSyntaxKind)
-                => AccessorDeclaration(getOrSetSyntaxKind).WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
-
-            return PropertyDeclaration(ParseTypeName(dtoDefinition.TypeName), Identifier(dtoDefinition.IdentifierName))
-                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                .WithAccessorList(AccessorList(List(new AccessorDeclarationSyntax[]
-                {
-                    GetOrSetNode(SyntaxKind.GetAccessorDeclaration),
-                    GetOrSetNode(SyntaxKind.SetAccessorDeclaration)
-                })));
         }
     }
 }
