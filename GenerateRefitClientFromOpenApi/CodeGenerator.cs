@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -22,12 +23,15 @@ namespace GenerateRefitClientFromOpenApi
         {
             var root = GenerateCore(dtoName, dtoProperties);
 
-            return root
-                .NormalizeWhitespace()
-                .ToFullString();
+            // TODO: check if we need to do FormatAsync
+
+            var workspace = new AdhocWorkspace();
+            root = Formatter.Format(root, workspace);
+
+            return root.ToFullString();
         }
 
-        private CompilationUnitSyntax GenerateCore(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
+        private SyntaxNode GenerateCore(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
         {
             var classDeclaration = ClassDeclaration(dtoName)
                 .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))

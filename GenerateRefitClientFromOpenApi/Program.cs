@@ -38,6 +38,7 @@ namespace GenerateRefitClientFromOpenApi
             };
         }
 
+        // TODO: move this elsewhere
         private static string Capitalize(string name)
         {
             return name.Length < 2 ? name : char.ToUpper(name[0]) + name.Substring(1);
