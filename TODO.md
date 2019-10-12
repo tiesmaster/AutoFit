@@ -1,3 +1,8 @@
+# Stories
+
+ * Detect namespace for given output directory
+
+# Braindump
  * generate all DTOs
  * generate the client interfaces
  * generate in the current directory
@@ -18,3 +23,6 @@
  * open up gitter channel?
  * update gitignore with latest from github/gitignore (vim,code,visualstudio)
  * add our own .editorconfig
+ * get listed in various places in .NET community
+   * [up-for-grabs.net](https://github.com/up-for-grabs/up-for-grabs.net)
+   * [.NET Open Source Developer Projects](https://github.com/Microsoft/dotnet/blob/master/dotnet-developer-projects.md)
