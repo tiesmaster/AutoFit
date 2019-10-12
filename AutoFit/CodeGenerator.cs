@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -13,22 +14,25 @@ namespace AutoFit
     public class CodeGenerator
     {
         private readonly string _namespaceName;
+        private readonly string _outputPath;
 
-        public CodeGenerator(string namespaceName)
+        public CodeGenerator(string namespaceName, string outputPath)
         {
             _namespaceName = namespaceName;
+            _outputPath = outputPath;
         }
 
-        public string GenerateDto(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
+        public void GenerateDto(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
         {
+            var workspace = new AdhocWorkspace();
             var root = GenerateCore(dtoName, dtoProperties);
 
-            // TODO: check if we need to do FormatAsync
-
-            var workspace = new AdhocWorkspace();
             root = Formatter.Format(root, workspace);
 
-            return root.ToFullString();
+            var source = root.ToFullString();
+            var outputFile = Path.Combine(_outputPath, $"{dtoName}.cs");
+
+            File.WriteAllText(outputFile, source);
         }
 
         private SyntaxNode GenerateCore(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
