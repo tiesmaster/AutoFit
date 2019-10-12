@@ -10,7 +10,7 @@ This is a project I just started working on. Don't expect this to be rock solid.
 
 This project assumes a couple of things, which might prevent it to be useful for your purpose. Your Mileage May Vary ;)
 
- * 
+ * all interfaces, and DTOs are generated in one namespace/directory
 
 # Prior Work
 
