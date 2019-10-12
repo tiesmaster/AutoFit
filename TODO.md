@@ -1,7 +1,6 @@
  * generate all DTOs
  * generate the client interfaces
  * generate in the current directory
- * create repo on GitHub
  * rename all of this to AutoFit
  * make it a .net core global tool
  * make it more chatty
@@ -17,4 +16,5 @@
  * allow for overriding how endpoints get turned into interfaces
  * support using the provided .editorconfig (check how dot-format does that)
  * open up gitter channel?
+ * update gitignore with latest from github/gitignore (vim,code,visualstudio)
  * add our own .editorconfig
