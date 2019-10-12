@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -19,7 +20,16 @@ namespace GenerateRefitClientFromOpenApi
 
         public string GenerateDto(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
         {
-            var root = CompilationUnit()
+            var root = GenerateCore(dtoName, dtoProperties);
+
+            return root
+                .NormalizeWhitespace()
+                .ToFullString();
+        }
+
+        private CompilationUnitSyntax GenerateCore(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
+        {
+            return CompilationUnit()
                 .WithMembers(
                     SingletonList<MemberDeclarationSyntax>(
                         NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
@@ -30,50 +40,26 @@ namespace GenerateRefitClientFromOpenApi
                                     TokenList(
                                         Token(SyntaxKind.PublicKeyword)))
                                 .WithMembers(
-                                    List<MemberDeclarationSyntax>(
-                                        new MemberDeclarationSyntax[]{
-                                            PropertyDeclaration(
-                                                PredefinedType(
-                                                    Token(SyntaxKind.StringKeyword)),
-                                                Identifier("Name"))
-                                            .WithModifiers(
-                                                TokenList(
-                                                    Token(SyntaxKind.PublicKeyword)))
-                                            .WithAccessorList(
-                                                AccessorList(
-                                                    List<AccessorDeclarationSyntax>(
-                                                        new AccessorDeclarationSyntax[]{
-                                                            AccessorDeclaration(
-                                                                SyntaxKind.GetAccessorDeclaration)
-                                                            .WithSemicolonToken(
-                                                                Token(SyntaxKind.SemicolonToken)),
-                                                            AccessorDeclaration(
-                                                                SyntaxKind.SetAccessorDeclaration)
-                                                            .WithSemicolonToken(
-                                                                Token(SyntaxKind.SemicolonToken))}))),
-                                            PropertyDeclaration(
-                                                PredefinedType(
-                                                    Token(SyntaxKind.StringKeyword)),
-                                                Identifier("AccountNumber"))
-                                            .WithModifiers(
-                                                TokenList(
-                                                    Token(SyntaxKind.PublicKeyword)))
-                                            .WithAccessorList(
-                                                AccessorList(
-                                                    List<AccessorDeclarationSyntax>(
-                                                        new AccessorDeclarationSyntax[]{
-                                                            AccessorDeclaration(
-                                                                SyntaxKind.GetAccessorDeclaration)
-                                                            .WithSemicolonToken(
-                                                                Token(SyntaxKind.SemicolonToken)),
-                                                            AccessorDeclaration(
-                                                                SyntaxKind.SetAccessorDeclaration)
-                                                            .WithSemicolonToken(
-                                                                Token(SyntaxKind.SemicolonToken))})))}))))));
+                                    List(
+                                        new MemberDeclarationSyntax[]
+                                        {
+                                            GeneratePropertyFromDtoDefinition(dtoProperties.First()),
+                                            GeneratePropertyFromDtoDefinition(dtoProperties.Last())
+                                        }))))));
+        }
 
-            return root
-                .NormalizeWhitespace()
-                .ToFullString();
+        private MemberDeclarationSyntax GeneratePropertyFromDtoDefinition(PropertyDefinition dtoDefinition)
+        {
+            return PropertyDeclaration(ParseTypeName(dtoDefinition.TypeName), Identifier(dtoDefinition.IdentifierName))
+                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                .WithAccessorList(
+                        AccessorList(
+                            List(
+                                new AccessorDeclarationSyntax[]{
+                                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))})));
         }
     }
 }

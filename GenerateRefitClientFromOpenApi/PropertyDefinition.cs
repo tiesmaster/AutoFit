@@ -9,7 +9,7 @@ namespace GenerateRefitClientFromOpenApi
 
     public class PropertyDefinition
     {
-        public string Type { get; set; }
-        public string Identifier { get; set; }
+        public string TypeName { get; set; }
+        public string IdentifierName { get; set; }
     }
 }

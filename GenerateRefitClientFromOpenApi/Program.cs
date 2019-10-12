@@ -33,8 +33,8 @@ namespace GenerateRefitClientFromOpenApi
         {
             return new PropertyDefinition
             {
-                Type = propertyDefinition.Value.GetProperty("type").ToString(),
-                Identifier = propertyDefinition.Name
+                TypeName = propertyDefinition.Value.GetProperty("type").ToString(),
+                IdentifierName = propertyDefinition.Name
             };
         }
     }
