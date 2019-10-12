@@ -29,23 +29,14 @@ namespace GenerateRefitClientFromOpenApi
 
         private CompilationUnitSyntax GenerateCore(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
         {
-            return CompilationUnit()
-                .WithMembers(
-                    SingletonList<MemberDeclarationSyntax>(
-                        NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
-                        .WithMembers(
-                            SingletonList<MemberDeclarationSyntax>(
-                                ClassDeclaration(dtoName)
-                                .WithModifiers(
-                                    TokenList(
-                                        Token(SyntaxKind.PublicKeyword)))
-                                .WithMembers(
-                                    List(
-                                        new MemberDeclarationSyntax[]
-                                        {
-                                            GeneratePropertyFromDtoDefinition(dtoProperties.ElementAt(0)),
-                                            GeneratePropertyFromDtoDefinition(dtoProperties.ElementAt(1))
-                                        }))))));
+            var classDeclaration = ClassDeclaration(dtoName)
+                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                .WithMembers(List(dtoProperties.Select(GeneratePropertyFromDtoDefinition)));
+
+            var namespaceDeclaration = NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
+                .WithMembers(SingletonList<MemberDeclarationSyntax>(classDeclaration));
+
+            return CompilationUnit().WithMembers(SingletonList<MemberDeclarationSyntax>(namespaceDeclaration));
         }
 
         private MemberDeclarationSyntax GeneratePropertyFromDtoDefinition(PropertyDefinition dtoDefinition)
