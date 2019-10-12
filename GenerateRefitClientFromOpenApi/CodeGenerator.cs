@@ -43,23 +43,23 @@ namespace GenerateRefitClientFromOpenApi
                                     List(
                                         new MemberDeclarationSyntax[]
                                         {
-                                            GeneratePropertyFromDtoDefinition(dtoProperties.First()),
-                                            GeneratePropertyFromDtoDefinition(dtoProperties.Last())
+                                            GeneratePropertyFromDtoDefinition(dtoProperties.ElementAt(0)),
+                                            GeneratePropertyFromDtoDefinition(dtoProperties.ElementAt(1))
                                         }))))));
         }
 
         private MemberDeclarationSyntax GeneratePropertyFromDtoDefinition(PropertyDefinition dtoDefinition)
         {
+            static AccessorDeclarationSyntax GetOrSetNode(SyntaxKind getOrSetSyntaxKind)
+                => AccessorDeclaration(getOrSetSyntaxKind).WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+
             return PropertyDeclaration(ParseTypeName(dtoDefinition.TypeName), Identifier(dtoDefinition.IdentifierName))
                 .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                .WithAccessorList(
-                        AccessorList(
-                            List(
-                                new AccessorDeclarationSyntax[]{
-                                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))})));
+                .WithAccessorList(AccessorList(List(new AccessorDeclarationSyntax[]
+                {
+                    GetOrSetNode(SyntaxKind.GetAccessorDeclaration),
+                    GetOrSetNode(SyntaxKind.SetAccessorDeclaration)
+                })));
         }
     }
 }
