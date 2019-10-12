@@ -51,8 +51,13 @@ namespace AutoFit
                 .WithMembers(SingletonList<MemberDeclarationSyntax>(classDeclaration));
 
             return CompilationUnit()
-                .WithUsings(SingletonList(UsingDirective(IdentifierName("System"))))
+                .WithUsings(List(definition.RequestedNamespaces.Select(ToUsingDirective)))
                 .WithMembers(SingletonList<MemberDeclarationSyntax>(namespaceDeclaration));
+        }
+
+        private UsingDirectiveSyntax ToUsingDirective(string namespaceName)
+        {
+            return UsingDirective(ParseName(namespaceName));
         }
 
         private MemberDeclarationSyntax GeneratePropertyFromDtoDefinition(PropertyDefinition dtoDefinition)

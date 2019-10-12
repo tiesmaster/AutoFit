@@ -46,16 +46,16 @@ namespace AutoFit
             };
         }
 
-        private static string ParseFormat(string format)
+        private static TypeDefinition ParseFormat(string format)
         {
             return format switch
             {
-                "date-time" => "DateTime",
+                "date-time" => new TypeDefinition { Name = "DateTime", Namespace = "System" },
                 _ => throw new NotSupportedException()
             };
         }
 
-        private static string ParseReferenceToOtherDefinition(JsonElement propertyDefinitionElement)
+        private static TypeDefinition ParseReferenceToOtherDefinition(JsonElement propertyDefinitionElement)
         {
             var reference = propertyDefinitionElement.GetProperty("$ref").ToString();
             return reference.Substring("#/definitions/".Length);
