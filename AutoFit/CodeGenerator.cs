@@ -17,8 +17,8 @@ namespace AutoFit
         public void Emit()
         {
             using var document = JsonDocument.Parse(File.OpenRead(_inputFile));
-            var dtoDefinitions = document.RootElement.GetProperty("definitions");
 
+            var dtoDefinitions = document.RootElement.GetProperty("definitions");
             foreach (var dtoDefinition in dtoDefinitions.EnumerateObject())
             {
                 GenerateDto(dtoDefinition);

@@ -15,21 +15,28 @@ namespace AutoFit
         private readonly string _namespaceName;
         private readonly string _outputPath;
 
+        private readonly AdhocWorkspace _workspace;
+
         public SourceEmitter(string namespaceName, string outputPath)
         {
             _namespaceName = namespaceName;
             _outputPath = outputPath;
+
+            _workspace = new AdhocWorkspace();
         }
 
         public void EmitDto(DtoDefinition definition)
         {
-            var workspace = new AdhocWorkspace();
             var root = GenerateDtoNode(definition);
+            EmitSource(root, $"{definition.Name}.cs");
+        }
 
-            root = Formatter.Format(root, workspace);
+        private void EmitSource(SyntaxNode root, string sourceFileName)
+        {
+            root = Formatter.Format(root, _workspace);
 
             var source = root.ToFullString();
-            var outputFile = Path.Combine(_outputPath, $"{definition.Name}.cs");
+            var outputFile = Path.Combine(_outputPath, sourceFileName);
 
             File.WriteAllText(outputFile, source);
         }
