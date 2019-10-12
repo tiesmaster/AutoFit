@@ -41,20 +41,27 @@ namespace AutoFit
 
         private static string ParseDtoType(JsonElement propertyDefinitionElement)
         {
-            var type = propertyDefinitionElement.GetProperty("type").ToString();
-            var format = GetFormat(propertyDefinitionElement);
+            var type = TryGetPropertyOrDefault(propertyDefinitionElement, "type");
+            var format = TryGetPropertyOrDefault(propertyDefinitionElement, "format");
 
             return type switch
             {
                 "number" => propertyDefinitionElement.GetProperty("format").ToString(),
                 "string" when format != null => ParseFormat(format),
+                null => ParseReferenceToOtherDefinition(propertyDefinitionElement),
                 _ => type,
             };
         }
 
-        private static string GetFormat(JsonElement propertyDefinitionElement)
+        private static string ParseReferenceToOtherDefinition(JsonElement propertyDefinitionElement)
         {
-            return propertyDefinitionElement.TryGetProperty("format", out var format)
+            var reference = propertyDefinitionElement.GetProperty("$ref").ToString();
+            return reference.Substring("#/definitions/".Length);
+        }
+
+        private static string TryGetPropertyOrDefault(JsonElement propertyDefinitionElement, string jsonPropertyName)
+        {
+            return propertyDefinitionElement.TryGetProperty(jsonPropertyName, out var format)
                 ? format.ToString()
                 : null;
         }
@@ -68,7 +75,6 @@ namespace AutoFit
             };
         }
 
-        // TODO: move this elsewhere
         private static string Capitalize(string name)
         {
             return name.Length < 2 ? name : char.ToUpper(name[0]) + name.Substring(1);
