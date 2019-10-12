@@ -21,20 +21,20 @@ namespace AutoFit
             using var document = JsonDocument.Parse(File.OpenRead(_inputFile));
             var dtoDefinitions = document.RootElement.GetProperty("definitions");
 
-            GenerateDto("BeneficiaryDto", dtoDefinitions);
-            GenerateDto("TransactionDto", dtoDefinitions);
+            foreach (var dtoDefinition in dtoDefinitions.EnumerateObject())
+            {
+                GenerateDto(dtoDefinition);
+            }
         }
 
-        private void GenerateDto(string dtoName, JsonElement dtoDefinitions)
+        private void GenerateDto(JsonProperty jsonDtoDefinition)
         {
-            var dtoDefinitionElement = dtoDefinitions.GetProperty(dtoName);
-
-            var propertyDefinitions = dtoDefinitionElement.GetProperty("properties");
+            var propertyDefinitions = jsonDtoDefinition.Value.GetProperty("properties");
             var dtoProperties = propertyDefinitions.EnumerateObject().Select(ToPropertyDefinition);
 
             var dtoDefinition = new DtoDefinition
             {
-                Name = dtoName,
+                Name = jsonDtoDefinition.Name,
                 Properties = dtoProperties
             };
 
