@@ -2,7 +2,7 @@
 {
     public class PropertyDefinition
     {
-        public string TypeName { get; set; }
+        public TypeDefinition TypeDefinition { get; set; }
         public string IdentifierName { get; set; }
     }
 }

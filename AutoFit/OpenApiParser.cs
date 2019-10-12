@@ -27,12 +27,12 @@ namespace AutoFit
         {
             return new PropertyDefinition
             {
-                TypeName = ParseDtoType(propertyDefinition.Value),
+                TypeDefinition = ParseDtoType(propertyDefinition.Value),
                 IdentifierName = propertyDefinition.Name.Capitalize()
             };
         }
 
-        private static string ParseDtoType(JsonElement propertyDefinitionElement)
+        private static TypeDefinition ParseDtoType(JsonElement propertyDefinitionElement)
         {
             var type = propertyDefinitionElement.TryGetPropertyOrDefault("type");
             var format = propertyDefinitionElement.TryGetPropertyOrDefault("format");

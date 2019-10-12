@@ -60,7 +60,7 @@ namespace AutoFit
             static AccessorDeclarationSyntax GetOrSetNode(SyntaxKind getOrSetSyntaxKind)
                 => AccessorDeclaration(getOrSetSyntaxKind).WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
 
-            return PropertyDeclaration(ParseTypeName(dtoDefinition.TypeName), Identifier(dtoDefinition.IdentifierName))
+            return PropertyDeclaration(ParseTypeName(dtoDefinition.TypeDefinition.Name), Identifier(dtoDefinition.IdentifierName))
                 .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                 .WithAccessorList(AccessorList(List(new AccessorDeclarationSyntax[]
                 {
