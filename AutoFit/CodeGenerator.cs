@@ -27,12 +27,18 @@ namespace AutoFit
 
         private void GenerateDto(string dtoName, JsonElement dtoDefinitions)
         {
-            var dtoDefinition = dtoDefinitions.GetProperty(dtoName);
+            var dtoDefinitionElement = dtoDefinitions.GetProperty(dtoName);
 
-            var propertyDefinitions = dtoDefinition.GetProperty("properties");
+            var propertyDefinitions = dtoDefinitionElement.GetProperty("properties");
             var dtoProperties = propertyDefinitions.EnumerateObject().Select(ToPropertyDefinition);
 
-            _dtoGenerator.EmitDto(dtoName, dtoProperties);
+            var dtoDefinition = new DtoDefinition
+            {
+                Name = dtoName,
+                Properties = dtoProperties
+            };
+
+            _dtoGenerator.EmitDto(dtoDefinition);
         }
 
         private static PropertyDefinition ToPropertyDefinition(JsonProperty propertyDefinition)

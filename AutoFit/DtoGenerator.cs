@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -22,24 +21,24 @@ namespace AutoFit
             _outputPath = outputPath;
         }
 
-        public void EmitDto(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
+        public void EmitDto(DtoDefinition definition)
         {
             var workspace = new AdhocWorkspace();
-            var root = GenerateDtoNode(dtoName, dtoProperties);
+            var root = GenerateDtoNode(definition);
 
             root = Formatter.Format(root, workspace);
 
             var source = root.ToFullString();
-            var outputFile = Path.Combine(_outputPath, $"{dtoName}.cs");
+            var outputFile = Path.Combine(_outputPath, $"{definition.Name}.cs");
 
             File.WriteAllText(outputFile, source);
         }
 
-        private SyntaxNode GenerateDtoNode(string dtoName, IEnumerable<PropertyDefinition> dtoProperties)
+        private SyntaxNode GenerateDtoNode(DtoDefinition definition)
         {
-            var classDeclaration = ClassDeclaration(dtoName)
+            var classDeclaration = ClassDeclaration(definition.Name)
                 .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                .WithMembers(List(dtoProperties.Select(GeneratePropertyFromDtoDefinition)));
+                .WithMembers(List(definition.Properties.Select(GeneratePropertyFromDtoDefinition)));
 
             var namespaceDeclaration = NamespaceDeclaration((NameSyntax)ParseTypeName(_namespaceName))
                 .WithMembers(SingletonList<MemberDeclarationSyntax>(classDeclaration));
